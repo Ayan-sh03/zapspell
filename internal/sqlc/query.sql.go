@@ -7,7 +7,48 @@ package sqlc
 
 import (
 	"context"
+	"database/sql"
 )
+
+const addAttempt = `-- name: AddAttempt :exec
+INSERT INTO attempts(
+    user_id,word_id,attempt_word,is_correct
+)VALUES(
+    $1,$2,$3,$4
+)
+`
+
+type AddAttemptParams struct {
+	UserID      int32
+	WordID      int32
+	AttemptWord string
+	IsCorrect   bool
+}
+
+func (q *Queries) AddAttempt(ctx context.Context, arg AddAttemptParams) error {
+	_, err := q.db.ExecContext(ctx, addAttempt,
+		arg.UserID,
+		arg.WordID,
+		arg.AttemptWord,
+		arg.IsCorrect,
+	)
+	return err
+}
+
+const addWord = `-- name: AddWord :one
+INSERT INTO words(
+    word
+)VALUES(
+    $1
+)RETURNING id, word, created_at
+`
+
+func (q *Queries) AddWord(ctx context.Context, word string) (Word, error) {
+	row := q.db.QueryRowContext(ctx, addWord, word)
+	var i Word
+	err := row.Scan(&i.ID, &i.Word, &i.CreatedAt)
+	return i, err
+}
 
 const createUser = `-- name: CreateUser :exec
 INSERT INTO users(
@@ -25,4 +66,151 @@ type CreateUserParams struct {
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
 	_, err := q.db.ExecContext(ctx, createUser, arg.Username, arg.Email)
 	return err
+}
+
+const getAllWords = `-- name: GetAllWords :many
+SELECT id, word, created_at
+FROM words
+`
+
+func (q *Queries) GetAllWords(ctx context.Context) ([]Word, error) {
+	rows, err := q.db.QueryContext(ctx, getAllWords)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Word
+	for rows.Next() {
+		var i Word
+		if err := rows.Scan(&i.ID, &i.Word, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAttemptsByUserID = `-- name: GetAttemptsByUserID :many
+SELECT id, user_id, word_id, attempt_word, is_correct, attempted_at
+FROM attempts
+WHERE user_id = $1
+`
+
+func (q *Queries) GetAttemptsByUserID(ctx context.Context, userID int32) ([]Attempt, error) {
+	rows, err := q.db.QueryContext(ctx, getAttemptsByUserID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Attempt
+	for rows.Next() {
+		var i Attempt
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.WordID,
+			&i.AttemptWord,
+			&i.IsCorrect,
+			&i.AttemptedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getRandomWord = `-- name: GetRandomWord :one
+SELECT word
+FROM words
+ORDER BY RANDOM()
+LIMIT 1
+`
+
+func (q *Queries) GetRandomWord(ctx context.Context) (string, error) {
+	row := q.db.QueryRowContext(ctx, getRandomWord)
+	var word string
+	err := row.Scan(&word)
+	return word, err
+}
+
+const getResultByUserID = `-- name: GetResultByUserID :one
+SELECT id, user_id, correct_spellings, total_attempts, success_percentage, updated_at
+FROM results
+WHERE user_id = $1
+`
+
+func (q *Queries) GetResultByUserID(ctx context.Context, userID sql.NullInt32) (Result, error) {
+	row := q.db.QueryRowContext(ctx, getResultByUserID, userID)
+	var i Result
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.CorrectSpellings,
+		&i.TotalAttempts,
+		&i.SuccessPercentage,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getUserByID = `-- name: GetUserByID :one
+SELECT id, username, email, created_at
+FROM users
+WHERE id = $1
+`
+
+func (q *Queries) GetUserByID(ctx context.Context, id int32) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByID, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT id, username, email, created_at
+FROM users
+WHERE username = $1
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getWordByID = `-- name: GetWordByID :one
+SELECT id, word, created_at
+FROM words
+WHERE id = $1
+`
+
+func (q *Queries) GetWordByID(ctx context.Context, id int32) (Word, error) {
+	row := q.db.QueryRowContext(ctx, getWordByID, id)
+	var i Word
+	err := row.Scan(&i.ID, &i.Word, &i.CreatedAt)
+	return i, err
 }
