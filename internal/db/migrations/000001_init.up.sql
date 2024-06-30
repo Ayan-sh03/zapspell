@@ -39,20 +39,3 @@ CREATE INDEX idx_attempt_user_id ON attempts(user_id);
 CREATE INDEX idx_attempt_word_id ON attempts(word_id);
 
 
-CREATE OR REPLACE FUNCTION update_results() RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE results
-    SET 
-        correct_spellings = correct_spellings + (CASE WHEN NEW.is_correct THEN 1 ELSE 0 END),
-        total_attempts = total_attempts + 1,
-        updated_at = CURRENT_TIMESTAMP
-    WHERE user_id = NEW.user_id;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_results_trigger
-AFTER INSERT ON attempts
-FOR EACH ROW
-EXECUTE FUNCTION update_results();

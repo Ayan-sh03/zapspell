@@ -15,7 +15,7 @@ type App struct {
 }
 
 func (app *App) Run() {
-	//load env
+	// load env
 
 	err := godotenv.Load(".env")
 

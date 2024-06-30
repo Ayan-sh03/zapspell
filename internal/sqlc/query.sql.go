@@ -96,6 +96,29 @@ func (q *Queries) GetAllWords(ctx context.Context) ([]Word, error) {
 	return items, nil
 }
 
+const getAttempPerWord = `-- name: GetAttempPerWord :one
+SELECT attempt_word,is_correct
+FROM attempts
+WHERE user_id = $1 AND word_id= $2
+`
+
+type GetAttempPerWordParams struct {
+	UserID int32
+	WordID int32
+}
+
+type GetAttempPerWordRow struct {
+	AttemptWord string
+	IsCorrect   bool
+}
+
+func (q *Queries) GetAttempPerWord(ctx context.Context, arg GetAttempPerWordParams) (GetAttempPerWordRow, error) {
+	row := q.db.QueryRowContext(ctx, getAttempPerWord, arg.UserID, arg.WordID)
+	var i GetAttempPerWordRow
+	err := row.Scan(&i.AttemptWord, &i.IsCorrect)
+	return i, err
+}
+
 const getAttemptsByUserID = `-- name: GetAttemptsByUserID :many
 SELECT id, user_id, word_id, attempt_word, is_correct, attempted_at
 FROM attempts
@@ -115,6 +138,63 @@ func (q *Queries) GetAttemptsByUserID(ctx context.Context, userID int32) ([]Atte
 			&i.ID,
 			&i.UserID,
 			&i.WordID,
+			&i.AttemptWord,
+			&i.IsCorrect,
+			&i.AttemptedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAttemptsForAllWordByUsesId = `-- name: GetAttemptsForAllWordByUsesId :many
+SELECT 
+    a.id AS attempt_id,
+    w.id AS word_id,
+    w.word,
+    a.attempt_word,
+    a.is_correct,
+    a.attempted_at
+FROM 
+    attempts a
+JOIN 
+    words w ON a.word_id = w.id
+WHERE 
+    a.user_id = $1
+ORDER BY 
+    a.attempted_at DESC
+`
+
+type GetAttemptsForAllWordByUsesIdRow struct {
+	AttemptID   int32
+	WordID      int32
+	Word        string
+	AttemptWord string
+	IsCorrect   bool
+	AttemptedAt sql.NullTime
+}
+
+func (q *Queries) GetAttemptsForAllWordByUsesId(ctx context.Context, userID int32) ([]GetAttemptsForAllWordByUsesIdRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAttemptsForAllWordByUsesId, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAttemptsForAllWordByUsesIdRow
+	for rows.Next() {
+		var i GetAttemptsForAllWordByUsesIdRow
+		if err := rows.Scan(
+			&i.AttemptID,
+			&i.WordID,
+			&i.Word,
 			&i.AttemptWord,
 			&i.IsCorrect,
 			&i.AttemptedAt,
@@ -202,6 +282,19 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 	return i, err
 }
 
+const getUserIDByEmail = `-- name: GetUserIDByEmail :one
+SELECT id
+FROM users
+WHERE email = $1
+`
+
+func (q *Queries) GetUserIDByEmail(ctx context.Context, email string) (int32, error) {
+	row := q.db.QueryRowContext(ctx, getUserIDByEmail, email)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getWordByID = `-- name: GetWordByID :one
 SELECT id, word, created_at
 FROM words
@@ -213,4 +306,23 @@ func (q *Queries) GetWordByID(ctx context.Context, id int32) (Word, error) {
 	var i Word
 	err := row.Scan(&i.ID, &i.Word, &i.CreatedAt)
 	return i, err
+}
+
+const updateUserResults = `-- name: UpdateUserResults :exec
+UPDATE results
+SET
+    correct_spellings = correct_spellings + (CASE WHEN $1::boolean THEN 1 ELSE 0 END),
+    total_attempts = total_attempts + 1,
+    updated_at = CURRENT_TIMESTAMP
+WHERE user_id = $2::int
+`
+
+type UpdateUserResultsParams struct {
+	Iscorrect bool
+	Userid    int32
+}
+
+func (q *Queries) UpdateUserResults(ctx context.Context, arg UpdateUserResultsParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserResults, arg.Iscorrect, arg.Userid)
+	return err
 }

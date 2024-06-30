@@ -10,6 +10,11 @@ SELECT id, username, email, created_at
 FROM users
 WHERE username = $1;
 
+-- name: GetUserIDByEmail :one
+SELECT id
+FROM users
+WHERE email = $1;
+
 -- name: GetUserByID :one
 SELECT id, username, email, created_at
 FROM users
@@ -55,3 +60,35 @@ FROM words;
 SELECT id, user_id, correct_spellings, total_attempts, success_percentage, updated_at
 FROM results
 WHERE user_id = $1;
+
+
+-- name: UpdateUserResults :exec
+UPDATE results
+SET
+    correct_spellings = correct_spellings + (CASE WHEN sqlc.arg(isCorrect)::boolean THEN 1 ELSE 0 END),
+    total_attempts = total_attempts + 1,
+    updated_at = CURRENT_TIMESTAMP
+WHERE user_id = sqlc.arg(userId)::int;
+
+-- name: GetAttempPerWord :one
+SELECT attempt_word,is_correct
+FROM attempts
+WHERE user_id = $1 AND word_id= $2;
+
+
+-- name: GetAttemptsForAllWordByUsesId :many
+SELECT 
+    a.id AS attempt_id,
+    w.id AS word_id,
+    w.word,
+    a.attempt_word,
+    a.is_correct,
+    a.attempted_at
+FROM 
+    attempts a
+JOIN 
+    words w ON a.word_id = w.id
+WHERE 
+    a.user_id = $1
+ORDER BY 
+    a.attempted_at DESC;

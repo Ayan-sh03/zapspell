@@ -15,7 +15,7 @@ func Connect(dsn string) {
 		log.Fatal("Error While connecting to Database")
 		return
 	}
-
+	log.Println("Connected to DB 🚀!")
 	db = conn
 
 }

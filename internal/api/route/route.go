@@ -18,10 +18,15 @@ func SetupRoutes() *mux.Router {
 
 	userRoutes:= r.PathPrefix("/api/v1/user").Subrouter()
 	wordRoutes:=r.PathPrefix("/api/v1/word").Subrouter()
+	resultRoutes:=r.PathPrefix("/api/v1/result").Subrouter()
 	userRoutes.HandleFunc("/",handler.CreateOrSyncUser).Methods("POST")
 
 	wordRoutes.HandleFunc("/",handler.AddWordToDB).Methods("POST")
-	
+	wordRoutes.HandleFunc("/attempt",handler.AddUserAttempt).Methods("POST")
+	wordRoutes.HandleFunc("/attempt",handler.GetAllAttempts).Methods("GET")
+
+
+	resultRoutes.HandleFunc("/",handler.GetResult).Methods("GET")
 	
 	return r
 
