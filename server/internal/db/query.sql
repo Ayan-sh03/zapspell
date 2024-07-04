@@ -37,7 +37,7 @@ INSERT INTO attempts(
 );
 
 -- name: GetRandomWord :one
-SELECT word
+SELECT word,id
 FROM words
 ORDER BY RANDOM()
 LIMIT 1;

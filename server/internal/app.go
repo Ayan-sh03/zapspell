@@ -9,6 +9,8 @@ import (
 	"github.com/ayan-sh03/zapspell/internal/config"
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
+
 )
 
 type App struct {
@@ -30,8 +32,17 @@ func (app *App) Run() {
 	config.Connect(dsn)
 
 	r := route.SetupRoutes()
-	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"}, // Adjust this to your needs
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	})
 
+	// Apply middleware
+	loggedRouter := handlers.LoggingHandler(os.Stdout, c.Handler(r))
+
+	// Start the server
 	err = http.ListenAndServe(":8080", loggedRouter)
 	if err != nil {
 		log.Fatal("Error starting the server: ", err)

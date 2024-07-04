@@ -213,17 +213,22 @@ func (q *Queries) GetAttemptsForAllWordByUsesId(ctx context.Context, userID int3
 }
 
 const getRandomWord = `-- name: GetRandomWord :one
-SELECT word
+SELECT word,id
 FROM words
 ORDER BY RANDOM()
 LIMIT 1
 `
 
-func (q *Queries) GetRandomWord(ctx context.Context) (string, error) {
+type GetRandomWordRow struct {
+	Word string
+	ID   int32
+}
+
+func (q *Queries) GetRandomWord(ctx context.Context) (GetRandomWordRow, error) {
 	row := q.db.QueryRowContext(ctx, getRandomWord)
-	var word string
-	err := row.Scan(&word)
-	return word, err
+	var i GetRandomWordRow
+	err := row.Scan(&i.Word, &i.ID)
+	return i, err
 }
 
 const getResultByUserID = `-- name: GetResultByUserID :one

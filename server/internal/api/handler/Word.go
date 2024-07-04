@@ -24,6 +24,22 @@ type userRequest struct {
 	Username string `json: "username" `
 }
 
+func GetRandomWord(w http.ResponseWriter, r *http.Request){
+	
+
+	que:= sqlc.New(config.DB())
+
+	dbWord,err:=que.GetRandomWord(context.Background())
+
+	if err!=nil{
+		log.Fatal("Error Getting word From DB", err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{"message": "OK","word":dbWord.Word,"id":dbWord.ID})
+
+}
+
 func AddWordToDB(w http.ResponseWriter, r *http.Request) {
 	var word models.Word
 

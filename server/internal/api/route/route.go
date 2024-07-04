@@ -22,6 +22,7 @@ func SetupRoutes() *mux.Router {
 	userRoutes.HandleFunc("/",handler.CreateOrSyncUser).Methods("POST")
 
 	wordRoutes.HandleFunc("/",handler.AddWordToDB).Methods("POST")
+	wordRoutes.HandleFunc("/",handler.GetRandomWord).Methods("GET")
 	wordRoutes.HandleFunc("/attempt",handler.AddUserAttempt).Methods("POST")
 	wordRoutes.HandleFunc("/attempt",handler.GetAllAttempts).Methods("GET")
 
