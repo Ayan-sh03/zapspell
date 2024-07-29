@@ -1,29 +1,40 @@
-'use server'
+"use server";
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-
-import { createClient } from '@/utils/supabase/server'
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function login(formData: FormData) {
-  const supabase = createClient()
+  
+    const email=  formData.get("email") 
+    const password = formData.get("password") 
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+
+    console.log("Login data:", { email, password });
+
+
+    const res = await fetch(`${process.env.SERVER_URL}/api/v1/user/login`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({email, password}),
+    });
+    
+
+  if (!res.ok) {
+    console.log("====================================");
+    console.log("Error while fetching");
+    console.log("====================================");
+    throw new Error("Failed to Fetch");
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const {token} = await res.json()
+  const month = 24 * 60 * 60 * 1000 * 30
+  cookies().set('token', token, { expires: Date.now() - month })
 
-  if (error) {
-    console.log('====================================');
-    console.log(error);
-    console.log('====================================');
-    redirect('/error')
-  }
 
-  revalidatePath('/', 'layout')
-  redirect('/')
+
+  revalidatePath("/", "layout");
+  redirect("/");
 }

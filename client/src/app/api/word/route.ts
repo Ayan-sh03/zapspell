@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       is_correct: isCorrect,
     });
 
-    const res = await fetch(`${process.env.SERVER_URL}/api/v1/word/attempt`, {
+    const res = await fetch(`${process.env.SERVER_URL}/api/v1/attempt/add`, {
       method: "POST",
       body,
     });
