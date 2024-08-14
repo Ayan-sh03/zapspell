@@ -7,7 +7,7 @@ router.use(express.json())
 
 
 router.post("/add", addAttempt);
-router.get("/get/:userId", getAttemptByUserId);
+router.get("/", getAttemptByUserId);
 router.get("/get/:userId/:wordId", getAllAttemptsByUserIdPerWord);
 
 export const attemptRouter = router

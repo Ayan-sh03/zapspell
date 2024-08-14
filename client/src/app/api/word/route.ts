@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
-  const res = await fetch(`${process.env.SERVER_URL}/api/v1/word/`, {
+  const res = await fetch(`${process.env.SERVER_URL}/api/v1/word/random`, {
     cache: "no-store",
   });
   const data = await res.json();
-  return NextResponse.json({ word: data.word, id: data.id });
+
+  return NextResponse.json({ word: data[0].word, id: data[0]._id });
 }
 
 export async function POST(req: NextRequest) {

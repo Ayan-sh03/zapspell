@@ -1,7 +1,7 @@
 import Attempt from "../Model/Attempt.js";
 
 export const addAttempt = async (req, res) => {
-  const {  word_id, attempt_word, is_correct } = req.body;
+  const {  wordId:word_id, attemptWord:attempt_word, isCorrect:is_correct } = req.body;
   const  userId  = req.user;
 
   try {
@@ -11,6 +11,11 @@ export const addAttempt = async (req, res) => {
       attempt_word,
       is_correct,
     });
+
+    console.log('====================================');
+    console.log(newAttempt);
+    console.log('====================================');
+
     if (!newAttempt) {
       res.status(400).json({ error: "Error Adding attempt" });
       // throw new Error("Error adding attempt")
@@ -24,11 +29,12 @@ export const addAttempt = async (req, res) => {
 };
 
 export const getAttemptByUserId = async (req, res) => {
-  const { userId } = req.params;
+  const  userId  = req.user;
+
   try {
-    const attempts = await Attempt.find({ userId: userId });
-    if (!attempts) {
-      res.status(400).json({ error: "No attempts found" });
+    const attempts = await Attempt.find({user_id:userId});
+    if (!attempts || attempts.length === 0) {
+     return res.status(404).json({ error: "No attempts found" });
     }
     res.status(200).json({  data: attempts });
   } catch (error) {

@@ -12,22 +12,33 @@ export default function Audio() {
   const [enteredWord, setEnteredWord] = useState("");
   const { toast } = useToast();
 
+
   const getWord = async () => {
     setGettingWord(true);
     const res = await fetch(`api/word`);
     const data = await res.json();
-    const { word: wordFromDB, id } = data;
+    console.log('====================================');
+    console.log(data.word);
+    console.log(data.id);
+    console.log('====================================');
+    
     setGettingWord(false);
-    setWord(wordFromDB);
-    setWordId(id);
+    setWord(data.word);
+    setWordId(data.id);
   };
 
   async function addAttempt(correct: boolean) {
-    await fetch("/api/word", {
+
+    const body = JSON.stringify({
+      attemptWord: enteredWord,
+      wordId: wordId,
+      isCorrect: correct,
+    });
+
+    await fetch(`/api/attempt/add`, {
       method: "POST",
       body: JSON.stringify({
         attemptWord: enteredWord,
-        username: "ayns",
         wordId: wordId,
         isCorrect: correct,
       }),
@@ -48,9 +59,6 @@ export default function Audio() {
       return;
     }
 
-    console.log("====================================");
-    console.log("entered word ", enteredWord);
-    console.log("====================================");
 
     if (word == enteredWord.toLowerCase()) {
       setEnteredWord("");
