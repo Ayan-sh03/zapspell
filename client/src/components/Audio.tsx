@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FormEvent, SVGProps, useEffect, useState } from "react";
 import { source_code } from "@/app/font";
 import { useToast } from "./ui/use-toast";
+import { decrypt } from "@/utils/word";
 
 export default function Audio() {
   const [word, setWord] = useState("");
@@ -12,41 +13,59 @@ export default function Audio() {
   const [enteredWord, setEnteredWord] = useState("");
   const { toast } = useToast();
 
-
   const getWord = async () => {
     setGettingWord(true);
     const res = await fetch(`api/word`);
+    if (!res.ok) {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const data = await res.json();
-    console.log('====================================');
+    console.log("====================================");
     console.log(data.word);
     console.log(data.id);
-    console.log('====================================');
-    
+    console.log("====================================");
+
+    const decryptedWord = decrypt(data.word);
+
     setGettingWord(false);
-    setWord(data.word);
+    setWord(decryptedWord);
     setWordId(data.id);
   };
 
-  async function addAttempt(correct: boolean) {
-
-    const body = JSON.stringify({
-      attemptWord: enteredWord,
-      wordId: wordId,
-      isCorrect: correct,
-    });
-
-    await fetch(`/api/attempt/add`, {
+  async function addAttempt() {
+    const res = await fetch(`/api/attempt/add`, {
       method: "POST",
       body: JSON.stringify({
         attemptWord: enteredWord,
         wordId: wordId,
-        isCorrect: correct,
       }),
     });
+
+    const { data } = await res.json();
+    console.log(data);
+
+    if (!res.ok) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong when submitting the attempt",
+      });
+      return;
+    }
+
+    return data.is_correct;
   }
 
   useEffect(() => {
     getWord();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -58,24 +77,21 @@ export default function Audio() {
       });
       return;
     }
+    const isCorrect = await addAttempt();
 
-
-    if (word == enteredWord.toLowerCase()) {
+    if (isCorrect) {
       setEnteredWord("");
-      await addAttempt(true);
       await getWord();
       toast({
         variant: "success",
         title: "Correct!",
       });
     } else {
-      await addAttempt(false);
       toast({
         variant: "destructive",
         title: "Incorrect!, Please Try Again",
       });
     }
-
   }
 
   function speak() {
@@ -91,7 +107,7 @@ export default function Audio() {
     >
       <div className="max-w-md w-full space-y-4">
         <div className="text-center">
-          <h1 className="text-3xl font-bold">Audio Player</h1>
+          <h1 className="text-3xl font-bold">Test </h1>
         </div>
         <div className="bg-muted rounded-lg p-4">
           <div className="flex items-center justify-between">

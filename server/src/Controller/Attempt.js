@@ -1,8 +1,26 @@
 import Attempt from "../Model/Attempt.js";
+import { getWordById } from "./Word.js";
+
 
 export const addAttempt = async (req, res) => {
-  const {  wordId:word_id, attemptWord:attempt_word, isCorrect:is_correct } = req.body;
+  const {  wordId:word_id, attemptWord:attempt_word } = req.body;
   const  userId  = req.user;
+  let is_correct = false
+
+  
+  const {word} = await getWordById(word_id);
+  console.log(word)
+  console.log(attempt_word)
+console.log(word === attempt_word)
+  if(word.trim() === attempt_word.trim()){
+    is_correct = true
+  }
+
+  if (!word) {
+    res.status(400).json({ error: "Word not found" });
+    return;
+  }
+
 
   try {
     const newAttempt = await Attempt.create({
@@ -21,7 +39,7 @@ export const addAttempt = async (req, res) => {
       // throw new Error("Error adding attempt")
     }
 
-    res.status(200).json({ status: 1, message: "Attempt added successfully" });
+    res.status(200).json({ status: 1, message: "Attempt added successfully", is_correct });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });

@@ -4,9 +4,11 @@ export async function GET() {
   const res = await fetch(`${process.env.SERVER_URL}/api/v1/word/random`, {
     cache: "no-store",
   });
+  // console.log(res);
   const data = await res.json();
+  console.log(data);
 
-  return NextResponse.json({ word: data[0].word, id: data[0]._id });
+  return NextResponse.json({ word: data.word , id: data.id });
 }
 
 export async function POST(req: NextRequest) {
