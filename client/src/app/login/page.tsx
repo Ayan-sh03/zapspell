@@ -22,7 +22,7 @@ export default function RegisterPage() {
         <Card className={`${source_code.className} w-full max-w-sm`}>
           <form action={login}>
             <CardHeader>
-              <CardTitle>Sing in</CardTitle>
+              <CardTitle>Sign in</CardTitle>
               <CardDescription>Welcome Back</CardDescription>
             </CardHeader>
             <CardContent>
