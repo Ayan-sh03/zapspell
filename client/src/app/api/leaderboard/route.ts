@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
-    const res = await fetch(`${process.env.SERVER_URL}/api/v1/result/leaderboard`, {
+    const res = await fetch(`${process.env.SERVER_URL}/api/v1/leaderboard`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${cookies().get("token")?.value}`,

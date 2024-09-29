@@ -41,6 +41,13 @@ const Navbar = () => {
             Profile
           </Link>
           <Link
+            href="/leader"
+            className="text-sm font-medium hover:underline underline-offset-4 text-primary-foreground"
+            prefetch={true}
+          >
+            Learderboard
+          </Link>
+          <Link
             href="/test"
             className="text-sm font-medium hover:underline underline-offset-4 text-primary-foreground"
             prefetch={true}

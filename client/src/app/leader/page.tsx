@@ -94,7 +94,7 @@ const leaderboardData = [
 
 export default function LeaderboardPage() {
   const [hoveredRank, setHoveredRank] = useState<number | null>(null);
-  const [Leaderboard, setLeaderBoard] = useState<LeaderboardEntry[]>([]);
+  const [leaderboard, setLeaderBoard] = useState<LeaderboardEntry[]>([]);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -152,7 +152,7 @@ export default function LeaderboardPage() {
         <CardContent className="p-6">
           <div className="space-y-4">
             <TooltipProvider>
-              {Leaderboard.map((entry, index) => (
+              { leaderboard && leaderboard.map((entry, index) => (
                 <Tooltip key={index}>
                   <TooltipTrigger asChild>
                     <div
@@ -185,7 +185,7 @@ export default function LeaderboardPage() {
                         </span>
                       </div>
                       <span className="text-2xl font-bold">
-                        {entry.combined_score.toLocaleString()}
+                        {entry.combined_score.toFixed(1).toLocaleString()}
                       </span>
                     </div>
                   </TooltipTrigger>

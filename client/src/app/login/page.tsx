@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { source_code } from "../font";
 import Navbar from "@/components/Navbar";
+import Link from "next/link";
 
 export default function RegisterPage() {
   return (
@@ -22,15 +23,19 @@ export default function RegisterPage() {
           <form action={login}>
             <CardHeader>
               <CardTitle>Sing in</CardTitle>
-              <CardDescription>
-                Welcome Back
-              </CardDescription>
+              <CardDescription>Welcome Back</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" placeholder="Enter your email" required />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
@@ -44,8 +49,21 @@ export default function RegisterPage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter>
-              <Button type="submit" className="w-full">Sign In</Button>
+            <CardFooter className="flex flex-col gap-2">
+              <Button type="submit" className="w-full">
+                Sign In
+              </Button>
+
+              <div className="text-center flex gap-4 flex-row items-center">
+                <span className="text-sm text-gray-200">
+                  Don&apos;t have an account?{" "}
+                </span>
+                <Link href="/register">
+                  <Button variant="link" className="text-sm p-0">
+                    Register
+                  </Button>
+                </Link>
+              </div>
             </CardFooter>
           </form>
         </Card>

@@ -4,5 +4,5 @@ const router = express.Router()
 
 
 router.get("/", GetResultsByUserId)
-router.get("/leaderboard", getLeaderboard)
+// router.get("/leaderboard", getLeaderboard)
 export const resultRouter = router

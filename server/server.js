@@ -9,6 +9,7 @@ import { userRouter } from "./src/Route/User.js";
 import { wordRouter } from "./src/Route/Word.js";
 import { resultRouter } from "./src/Route/Result.js";
 import { authorizationMiddleware } from "./src/Middleware/Auth.js";
+import { getLeaderboard } from "./src/Controller/Result.js";
 export const app = express();
 configDotenv();
 
@@ -22,7 +23,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/word", wordRouter);
 app.use("/api/v1/attempt", authorizationMiddleware, attemptRouter);
 app.use("/api/v1/result", authorizationMiddleware, resultRouter);
-
+app.use("/api/v1/leaderboard",getLeaderboard)
 app.get("/", (_, res) => {
   res.json({ message: "hello world" });
 });
