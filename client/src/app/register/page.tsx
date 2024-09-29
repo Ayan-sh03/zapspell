@@ -71,22 +71,20 @@ export default function RegisterPage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col space-y-2">
+            <CardFooter>
               <Button type="submit" className="w-full">
                 Sign Up
               </Button>
-              <div className="text-center">
-                <span className="text-sm text-gray-300">
-                  Already have an account?{" "}
-                </span>
-                <Link href="/login">
-                  <Button variant="link" type="button" className="text-sm p-0">
-                    Login
-                  </Button>
-                </Link>
-              </div>
             </CardFooter>
           </form>
+          <CardFooter>
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link href="/login" className="text-primary underline">
+                Login
+              </Link>
+            </p>
+          </CardFooter>
         </Card>
       </div>
     </div>
