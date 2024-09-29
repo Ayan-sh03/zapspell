@@ -38,7 +38,7 @@ export default function Audio() {
     const res = await fetch(`/api/attempt/add`, {
       method: "POST",
       body: JSON.stringify({
-        attemptWord: enteredWord,
+        attemptWord: enteredWord.toLocaleLowerCase(),
         wordId: wordId,
       }),
     });

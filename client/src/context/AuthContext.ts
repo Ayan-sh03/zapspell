@@ -30,6 +30,7 @@ const useAuthStore = create((set) => ({
         credentials: 'include'
       });
       set({ isLoggedIn: false, user: null });
+      window.location.href = '/login';
     } catch (error) {
       console.error('Logout failed:', error);
     }

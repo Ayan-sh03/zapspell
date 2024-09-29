@@ -27,3 +27,82 @@ export const GetResultsByUserId = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const getLeaderboard = async (req, res) => {
+  try {
+    const leaderboard = await Result.aggregate([
+      {
+        $project: {
+          user_id: 1,
+          correct_spellings: 1,
+          total_attempts: 1,
+          success_percentage: 1,
+          combined_score: {
+            $add: [
+              { $multiply: ['$success_percentage', 0.5] },
+              { $multiply: ['$correct_spellings', 0.3] },
+              { $multiply: ['$total_attempts', 0.2] },
+            ],
+          },
+        },
+      },
+      { $sort: { combined_score: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: 'users', // Change 'Users' to 'users' (MongoDB collection is lowercase)
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      { $unwind: '$user' }, // Unwind the user array to access the fields
+      {
+        $project: {
+          _id: 0,
+          first_name: '$user.first_name', // Access first_name and last_name from 'user'
+          last_name: '$user.last_name',
+          correct_spellings: 1,
+          total_attempts: 1,
+          success_percentage: 1,
+          combined_score: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json(leaderboard);
+  } catch (error) {
+    console.error('Error during aggregation:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+// export const getLeaderboard = async (req, res) => {
+
+
+//   const leaderboard = await Result.aggregate([
+//     {
+//       $project: {
+//         user_id: 1,
+//         correct_spellings: 1,
+//         total_attempts: 1,
+//         success_percentage: 1,
+//         combined_score: {
+//           $add: [
+//             { $multiply: ['$success_percentage', 0.5] },
+//             { $multiply: ['$correct_spellings', 0.3] },
+//             { $multiply: ['$total_attempts', 0.2] }
+//           ]
+//         }
+//       }
+//     },
+//     { $sort: { combined_score: -1 } },
+//     { $limit: 10 }
+//   ]); 
+  
+//   console.log(leaderboard);
+
+//   res.status(200).json(leaderboard);
+
+// };

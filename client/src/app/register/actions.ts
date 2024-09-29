@@ -22,17 +22,17 @@ export async function register(formData: FormData) {
     body: JSON.stringify(data),
   });
 
+
+
   if (!res.ok) {
-    // const errorBody = await res.text();
-    // console.error("Error response:", res.status, errorBody);
-    throw new Error(`Failed to register: ${res.status} `);
+    throw new Error(`Failed to register: ${res.statusText} `);
   }
 
   const { token } = await res.json();
   console.log("Registration successful, setting cookie");
   console.log("Token:", token);
 
-  const month = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+  const month = 1 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
   cookies().set("token", token, {
     expires: new Date(Date.now() + month),
     httpOnly: true,

@@ -30,7 +30,7 @@ export async function login(formData: FormData) {
   }
 
   const {token} = await res.json()
-  const month = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+  const month = 1 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
   cookies().set("token", token, {
     expires: new Date(Date.now() + month),
     httpOnly: true,

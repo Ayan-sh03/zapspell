@@ -38,7 +38,7 @@ export const getUser = async (req, res) => {
   // Set the token as an HTTP-only cookie
   res.cookie('token', token, {
     httpOnly: true,
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: 24 * 60 * 60 * 1000, // 1 days
     secure: process.env.NODE_ENV === 'production', // Use secure in production
     sameSite: 'strict'
   });
@@ -94,7 +94,7 @@ export const createUser = async (req, res) => {
   // Set the token as an HTTP-only cookie
   res.cookie('token', token, {
     httpOnly: true,
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: 1 * 24 * 60 * 60 * 1000, // 30 days
     secure: process.env.NODE_ENV === 'production', // Use secure in production
     sameSite: 'strict'
   });
