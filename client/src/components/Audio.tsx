@@ -26,10 +26,6 @@ export default function Audio() {
     }
 
     const data = await res.json();
-    console.log("====================================");
-    console.log(data.word);
-    console.log(data.id);
-    console.log("====================================");
 
     const decryptedWord = decrypt(data.word);
 
@@ -48,7 +44,6 @@ export default function Audio() {
     });
 
     const { data } = await res.json();
-    console.log(data);
 
     if (!res.ok) {
       toast({
@@ -103,7 +98,7 @@ export default function Audio() {
   }
   return (
     <div
-      className={`flex flex-col items-center justify-center h-screen w-full bg-background text-foreground ${source_code.className}`}
+      className={`flex flex-col items-center justify-center  w-full bg-background text-foreground ${source_code.className}`}
     >
       <div className="max-w-md w-full space-y-4">
         <div className="text-center">
