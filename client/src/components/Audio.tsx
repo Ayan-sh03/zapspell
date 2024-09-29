@@ -45,7 +45,7 @@ export default function Audio() {
     } finally {
       setGettingWord(false);
     }
-  }, [difficulty, toast]);
+  }, [difficulty, toast,gettingWord]);
 
   async function addAttempt() {
     const res = await fetch(`/api/attempt/add`, {
