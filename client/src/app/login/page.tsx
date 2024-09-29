@@ -49,23 +49,23 @@ export default function RegisterPage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col gap-2">
+            <CardFooter>
               <Button type="submit" className="w-full">
                 Sign In
               </Button>
-
-              <div className="text-center flex gap-4 flex-row items-center">
-                <span className="text-sm text-gray-200">
-                  Don&apos;t have an account?{" "}
-                </span>
-                <Link href="/register">
-                  <Button variant="link" className="text-sm p-0">
-                    Register
-                  </Button>
-                </Link>
-              </div>
             </CardFooter>
           </form>
+          <CardFooter className="flex flex-col gap-2">
+            <p className="text-sm text-muted-foreground">
+              Don&apos;t have an account?
+              <Link
+                href="/register"
+                className="text-primary underline underline-offset-4 ml-1"
+              >
+                Register
+              </Link>
+            </p>
+          </CardFooter>
         </Card>
       </div>
     </div>

@@ -22,8 +22,6 @@ export async function register(formData: FormData) {
     body: JSON.stringify(data),
   });
 
-
-
   if (!res.ok) {
     throw new Error(`Failed to register: ${res.statusText} `);
   }
@@ -36,12 +34,12 @@ export async function register(formData: FormData) {
   cookies().set("token", token, {
     expires: new Date(Date.now() + month),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    path: '/'
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
   });
 
   console.log("Cookie set, revalidating and redirecting");
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect("/dashboard");
 }
