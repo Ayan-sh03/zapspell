@@ -48,7 +48,7 @@ export const getWordById = async (id) => {
 export const getRandomWord = async (req, res) => {
   try {
     const { difficulty } = req.query;
-    const userId = req.user._id; // Assuming req.user contains the user object with _id
+    const userId = req.user; // Assuming req.user contains the user object with _id
 
     let query = {
       _id: { $nin: await getUserAttemptedWordIds(userId) }
