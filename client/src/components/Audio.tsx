@@ -72,7 +72,7 @@ export default function Audio() {
 
   useEffect(() => {
     if (difficulty !== "") getWord();
-  }, [difficulty, getWord]);
+  }, [difficulty]);
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
@@ -106,7 +106,6 @@ export default function Audio() {
   };
 
   function speak() {
-    console.log(word);
     let utterance = new SpeechSynthesisUtterance(word || "hello world");
     let voicesArray = speechSynthesis.getVoices();
     utterance.voice = voicesArray[3];

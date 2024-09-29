@@ -185,7 +185,7 @@ export default function LeaderboardPage() {
                         </span>
                       </div>
                       <span className="text-2xl font-bold">
-                        {entry.combined_score.toFixed(1).toLocaleString()}
+                        {entry.combined_score?.toFixed(1).toLocaleString()}
                       </span>
                     </div>
                   </TooltipTrigger>
