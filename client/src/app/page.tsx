@@ -8,7 +8,7 @@ export default function Home() {
     <div className={`flex flex-col min-h-[100dvh] ${source_code.className}`}>
       <header className="px-4 lg:px-6 h-14 flex items-center bg-background">
         <Link
-          href="#"
+          href="/dashboard"
           className="flex items-center justify-center"
           prefetch={false}
         >

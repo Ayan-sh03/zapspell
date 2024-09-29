@@ -1,4 +1,3 @@
-
 const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY;
 export const decrypt = (encodedWord) => {
   const word = Buffer.from(encodedWord, "base64").toString();

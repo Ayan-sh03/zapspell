@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { source_code } from "../font";
 import Navbar from "@/components/Navbar";
+import Link from "next/link";
 
 export default function RegisterPage() {
   return (
@@ -21,16 +22,20 @@ export default function RegisterPage() {
         <Card className={`${source_code.className} w-full max-w-sm`}>
           <form action={login}>
             <CardHeader>
-              <CardTitle>Sing in</CardTitle>
-              <CardDescription>
-                Welcome Back
-              </CardDescription>
+              <CardTitle>Sign in</CardTitle>
+              <CardDescription>Welcome Back</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" placeholder="Enter your email" required />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
@@ -45,9 +50,22 @@ export default function RegisterPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="w-full">Sign In</Button>
+              <Button type="submit" className="w-full">
+                Sign In
+              </Button>
             </CardFooter>
           </form>
+          <CardFooter className="flex flex-col gap-2">
+            <p className="text-sm text-muted-foreground">
+              Don&apos;t have an account?
+              <Link
+                href="/register"
+                className="text-primary underline underline-offset-4 ml-1"
+              >
+                Register
+              </Link>
+            </p>
+          </CardFooter>
         </Card>
       </div>
     </div>

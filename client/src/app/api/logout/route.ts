@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-
+import { cookies } from "next/headers";
 export const POST = async (request: Request) => {
   const res = await fetch(`${process.env.SERVER_URL}/api/v1/user/logout`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${cookies().get("token")?.value}`,
     },
   });
   if (res.status === 401) {

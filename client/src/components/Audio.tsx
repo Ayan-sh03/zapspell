@@ -1,44 +1,55 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FormEvent, SVGProps, useEffect, useState } from "react";
+import { FormEvent, SVGProps, useCallback, useEffect, useState } from "react";
 import { source_code } from "@/app/font";
 import { useToast } from "./ui/use-toast";
 import { decrypt } from "@/utils/word";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Audio() {
+  const [difficulty, setDifficulty] = useState("");
   const [word, setWord] = useState("");
   const [wordId, setWordId] = useState("");
   const [gettingWord, setGettingWord] = useState(false);
   const [enteredWord, setEnteredWord] = useState("");
   const { toast } = useToast();
 
-  const getWord = async () => {
+  const getWord = useCallback(async () => {
+    if (gettingWord) return; // Prevent multiple simultaneous calls
     setGettingWord(true);
-    const res = await fetch(`api/word`);
-    if (!res.ok) {
+    try {
+      const res = await fetch(`api/word?difficulty=${difficulty}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch word");
+      }
+      const data = await res.json();
+      const decryptedWord = decrypt(data.word);
+      setWord(decryptedWord);
+      setWordId(data.id);
+    } catch (error) {
+      console.error("Error fetching word:", error);
       toast({
         title: "Error",
         description: "Something went wrong",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setGettingWord(false);
     }
-
-    const data = await res.json();
-
-    const decryptedWord = decrypt(data.word);
-
-    setGettingWord(false);
-    setWord(decryptedWord);
-    setWordId(data.id);
-  };
+  }, [difficulty, toast]);
 
   async function addAttempt() {
     const res = await fetch(`/api/attempt/add`, {
       method: "POST",
       body: JSON.stringify({
-        attemptWord: enteredWord,
+        attemptWord: enteredWord.toLowerCase(),
         wordId: wordId,
       }),
     });
@@ -58,10 +69,8 @@ export default function Audio() {
   }
 
   useEffect(() => {
-    getWord();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (difficulty !== "") getWord();
+  }, [difficulty, getWord]);
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
@@ -76,7 +85,8 @@ export default function Audio() {
 
     if (isCorrect) {
       setEnteredWord("");
-      await getWord();
+      setDifficulty("");
+      // await getWord();
       toast({
         variant: "success",
         title: "Correct!",
@@ -88,6 +98,9 @@ export default function Audio() {
       });
     }
   }
+  const handleDifficultyChange = (value: string) => {
+    setDifficulty(value);
+  };
 
   function speak() {
     let utterance = new SpeechSynthesisUtterance(word || "hello world");
@@ -123,6 +136,16 @@ export default function Audio() {
             </div>
           </div>
         </div>
+        <Select value={difficulty} onValueChange={handleDifficultyChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Difficulty" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="easy">Easy</SelectItem>
+            <SelectItem value="medium">Medium</SelectItem>
+            <SelectItem value="hard">Hard</SelectItem>
+          </SelectContent>
+        </Select>
         <form className="flex items-center space-x-2" onSubmit={handleSubmit}>
           <Input
             type="text"

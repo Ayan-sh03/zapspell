@@ -4,7 +4,6 @@ export async function GET() {
   const res = await fetch(`${process.env.SERVER_URL}/api/v1/word/random`, {
     cache: "no-store",
   });
-  // console.log(res);
   const data = await res.json();
   console.log(data);
 

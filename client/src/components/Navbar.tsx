@@ -1,4 +1,4 @@
-
+"use client";
 import { PencilIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -15,16 +15,13 @@ const Navbar = () => {
 
   useEffect(() => {
     checkAuth();
-    console.log('====================================');
-    console.log("user not logged in ");
-    console.log('====================================');
   }, [checkAuth]);
 
   return (
     <>
       <header className="px-4 lg:px-6 h-14  flex items-center bg-background">
         <Link
-          href="#"
+          href="/"
           className="flex items-center justify-center"
           prefetch={false}
         >
@@ -40,6 +37,20 @@ const Navbar = () => {
             prefetch={true}
           >
             Profile
+          </Link>
+          <Link
+            href="/leader"
+            className="text-sm font-medium hover:underline underline-offset-4 text-primary-foreground"
+            prefetch={true}
+          >
+            Learderboard
+          </Link>
+          <Link
+            href="/test"
+            className="text-sm font-medium hover:underline underline-offset-4 text-primary-foreground"
+            prefetch={true}
+          >
+            Play
           </Link>
 
           <Button onClick={isLoggedIn ? logout : undefined}>
