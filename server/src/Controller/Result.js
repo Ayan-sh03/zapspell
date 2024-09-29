@@ -39,9 +39,12 @@ export const getLeaderboard = async (req, res) => {
           success_percentage: 1,
           combined_score: {
             $add: [
-              { $multiply: ['$success_percentage', 0.5] },
-              { $multiply: ['$correct_spellings', 0.3] },
-              { $multiply: ['$total_attempts', 0.2] },
+              { $multiply: ['$success_percentage', 0.5] },           // 50% weight for success percentage
+              { $multiply: ['$correct_spellings', 0.35] },            // 30% weight for total correct spellings
+              { $multiply: ['$easy_correct', 0.1] },                 // 10% weight for easy correct answers
+              { $multiply: ['$medium_correct', 0.15] },              // 15% weight for medium correct answers
+              { $multiply: ['$hard_correct', 0.30] }                 // 25% weight for hard correct answers
+    
             ],
           },
         },
