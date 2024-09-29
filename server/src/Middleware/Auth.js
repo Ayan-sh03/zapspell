@@ -8,6 +8,9 @@ export const authorizationMiddleware = (req, res, next) => {
   }
 
   const token = authHeader.split("Bearer ")[1];
+  console.log("====================================");
+  console.log(token);
+  console.log("====================================");
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_AUTH);

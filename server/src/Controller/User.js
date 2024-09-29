@@ -46,6 +46,21 @@ export const getUser = async (req, res) => {
   res.status(200).json({  token: token, email: userEmail });
 };
 
+export const logout = async (req, res) => {
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logout successful" });
+};                
+
+export const getUserById = async (req, res) => {
+  const id  = req.user;
+  // console.log(id);
+  const user = await User.findById(id);
+  // console.log(user);
+  const { email } = user;
+  const userWithoutPassword = {email};
+  res.status(200).json(userWithoutPassword);
+};
+
 export const createUser = async (req, res) => {
   const { first_name, last_name, password, email } = req.body;
 
