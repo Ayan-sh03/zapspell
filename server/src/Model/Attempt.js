@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Result from './Result.js';
+import { getWordById } from '../Controller/Word.js';
 
 const attemptSchema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -15,6 +16,15 @@ post-save middleware function that runs after a document is saved in the `Attemp
 */
 attemptSchema.post('save', async function(doc, next) {
   try {
+
+    console.log('=========== PRINTING DOC =========================');
+    console.log(doc);
+    console.log('====================================');
+
+    const { difficulty } = await getWordById(doc.word_id);
+    console.log(difficulty)
+    doc.difficulty = difficulty;
+
     const result = await Result.findOne({ user_id: doc.user_id });
 
     if (result) {
@@ -22,6 +32,24 @@ attemptSchema.post('save', async function(doc, next) {
       if (doc.is_correct) {
         result.correct_spellings += 1;
       }
+
+      // Update difficulty-specific fields
+      switch (doc.difficulty) {
+        case 'easy':
+          result.easy_attempts += 1;
+          if (doc.is_correct) result.easy_correct += 1;
+          break;
+        case 'medium':
+          result.medium_attempts += 1;
+          if (doc.is_correct) result.medium_correct += 1;
+          break;
+        case 'hard':
+          result.hard_attempts += 1;
+          if (doc.is_correct) result.hard_correct += 1;
+          break;
+      }
+
+      // Recalculate percentages
       result.success_percentage = result.total_attempts > 0 ? (result.correct_spellings / result.total_attempts) * 100 : 0;
       result.updated_at = new Date();
       await result.save();
@@ -29,7 +57,9 @@ attemptSchema.post('save', async function(doc, next) {
       const newResult = new Result({
         user_id: doc.user_id,
         total_attempts: 1,
-        correct_spellings: doc.is_correct ? 1 : 0
+        correct_spellings: doc.is_correct ? 1 : 0,
+        [`${doc.difficulty}_attempts`]: 1,
+        [`${doc.difficulty}_correct`]: doc.is_correct ? 1 : 0
       });
       await newResult.save();
     }
@@ -38,7 +68,6 @@ attemptSchema.post('save', async function(doc, next) {
     next(err);
   }
 });
-
 const Attempt = mongoose.model('Attempt', attemptSchema);
 
 export default Attempt;
@@ -46,7 +75,8 @@ export default Attempt;
 //* POSSIBLE CHANGES
 /**
  * 
- * attemptSchema.post('save', async function(doc, next) {
+ *
+  attemptSchema.post('save', async function(doc, next) {
   try {
     const result = await Result.findOne({ user_id: doc.user_id });
 
