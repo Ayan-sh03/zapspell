@@ -37,7 +37,7 @@ export default function Dashboard() {
           method: "GET",
         });
         const { data } = await res.json();
-        console.log(data);
+        console.log(data[0]);
         // Handle the data as needed
 
 
@@ -45,11 +45,11 @@ export default function Dashboard() {
           correctSpellings: data[0].correct_spellings,
           totalSpellings: data[0].total_attempts,
           successPercentage: (data[0].success_percentage).toFixed(2),
-          easyPercentage: (data[0].easy_correct / data.easy_attempts) * 100,
-          mediumPercentage:
-            (data[0].medium_correct / data.medium_attempts) * 100,
-          hardPercentage: (data[0].hard_correct / data.hard_attempts) * 100,
+          easyPercentage: (data[0].easy_correct / data[0].total_attempts) * 100,
+          mediumPercentage: (data[0].medium_correct / data[0].total_attempts) * 100,
+          hardPercentage: (data[0].hard_correct / data[0].total_attempts) * 100,
         };
+        
         console.log(newStat);
         setStats(newStat);
       } catch (error) {

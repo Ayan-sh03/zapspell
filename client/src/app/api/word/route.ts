@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req : NextRequest) {
   //get the query params
   const { searchParams } = new URL(req.url);
-  const diff= searchParams.get("difficulty");
+  const diff= searchParams.get("difficulty") || "easy";
 
   const res = await fetch(`${process.env.SERVER_URL}/api/v1/word/random?difficulty=${diff}`, {
     cache: "no-store",
@@ -13,7 +13,7 @@ export async function GET(req : NextRequest) {
       Authorization: `Bearer ${cookies().get("token")?.value}`,
     },
   });
-  
+
   // console.log(res);
   const data = await res.json();
   console.log(data);
