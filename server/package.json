@@ -10,6 +10,9 @@
     "build": "npm i",
     "start": "node server.js"
   },
+  "engines": {
+    "node": ">=18.17.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
