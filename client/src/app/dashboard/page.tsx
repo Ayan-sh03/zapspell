@@ -41,13 +41,12 @@ export default function Dashboard() {
         // Handle the data as needed
 
         const newStat: Stats = {
-          correctSpellings: data[0].correct_spellings,
-          totalSpellings: data[0].total_attempts,
-          successPercentage: data[0].success_percentage.toFixed(2),
-          easyPercentage: (data[0].easy_correct / data[0].total_attempts) * 100,
-          mediumPercentage:
-            (data[0].medium_correct / data[0].total_attempts) * 100,
-          hardPercentage: (data[0].hard_correct / data[0].total_attempts) * 100,
+          correctSpellings: data[0]?.correct_spellings ?? 0,
+          totalSpellings: data[0]?.total_attempts ?? 0,
+          successPercentage: data[0]?.success_percentage?.toFixed(2) ?? "0.00",
+          easyPercentage: ((data[0]?.easy_correct ?? 0) / (data[0]?.total_attempts || 1)) * 100,
+          mediumPercentage: ((data[0]?.medium_correct ?? 0) / (data[0]?.total_attempts || 1)) * 100,
+          hardPercentage: ((data[0]?.hard_correct ?? 0) / (data[0]?.total_attempts || 1)) * 100,
         };
 
         // console.log(newStat);
