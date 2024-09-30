@@ -37,20 +37,20 @@ export default function Dashboard() {
           method: "GET",
         });
         const { data } = await res.json();
-        console.log(data[0]);
+        // console.log(data[0]);
         // Handle the data as needed
-
 
         const newStat: Stats = {
           correctSpellings: data[0].correct_spellings,
           totalSpellings: data[0].total_attempts,
-          successPercentage: (data[0].success_percentage).toFixed(2),
+          successPercentage: data[0].success_percentage.toFixed(2),
           easyPercentage: (data[0].easy_correct / data[0].total_attempts) * 100,
-          mediumPercentage: (data[0].medium_correct / data[0].total_attempts) * 100,
+          mediumPercentage:
+            (data[0].medium_correct / data[0].total_attempts) * 100,
           hardPercentage: (data[0].hard_correct / data[0].total_attempts) * 100,
         };
-        
-        console.log(newStat);
+
+        // console.log(newStat);
         setStats(newStat);
       } catch (error) {
         console.error(error);
@@ -135,8 +135,9 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-xs">
-                Easy: {stats?.easyPercentage}% | Medium:{" "}
-                {stats?.mediumPercentage}% | Hard: {stats?.hardPercentage}%
+                Easy: {stats?.easyPercentage.toFixed(2)}% | Medium:{" "}
+                {stats?.mediumPercentage.toFixed(2)}% | Hard:{" "}
+                {stats?.hardPercentage.toFixed(2)}%
               </div>
             </CardContent>
           </Card>

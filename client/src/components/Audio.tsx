@@ -19,7 +19,6 @@ export default function Audio() {
   const [wordId, setWordId] = useState("");
   const [gettingWord, setGettingWord] = useState(false);
   const [enteredWord, setEnteredWord] = useState("");
-  const [correctlyAnswered, setCorrectlyAnswered] = useState(false);
   const { toast } = useToast();
 
   const getWord = useCallback(async () => {
@@ -34,7 +33,6 @@ export default function Audio() {
       const decryptedWord = decrypt(data.word);
       setWord(decryptedWord);
       setWordId(data.id);
-      setCorrectlyAnswered(false);
     } catch (error) {
       console.error("Error fetching word:", error);
       toast({
@@ -45,7 +43,7 @@ export default function Audio() {
     } finally {
       setGettingWord(false);
     }
-  }, [difficulty, toast,gettingWord]);
+  }, [difficulty, toast, gettingWord]);
 
   async function addAttempt() {
     const res = await fetch(`/api/attempt/add`, {
@@ -87,9 +85,7 @@ export default function Audio() {
 
     if (isCorrect) {
       setEnteredWord("");
-      setDifficulty("");
-      // await getWord();
-      setCorrectlyAnswered(true);
+      await getWord();
       toast({
         variant: "success",
         title: "Correct!",
@@ -158,7 +154,7 @@ export default function Audio() {
             placeholder="Enter your Spelling here"
             className="flex-1"
           />
-          <Button disabled={gettingWord || correctlyAnswered} type="submit">
+          <Button disabled={gettingWord} type="submit">
             Submit
           </Button>
         </form>
