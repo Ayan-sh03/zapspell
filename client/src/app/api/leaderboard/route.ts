@@ -14,5 +14,7 @@ export async function GET(req: Request) {
     const data = await res.json();
     console.log(data);
     return NextResponse.json({ data }, { status: 200 });
-  } catch (error) {}
+  } catch (error) {
+    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+  }
 }
