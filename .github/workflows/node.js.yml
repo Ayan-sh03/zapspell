@@ -37,3 +37,6 @@ jobs:
     - name: Build Server
       run: npm run build
       working-directory: server  # Build the server if applicable
+
+    - name: Run Server
+      run: pm2 restart zapspell
