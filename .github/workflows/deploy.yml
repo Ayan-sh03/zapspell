@@ -1,0 +1,38 @@
+name: Deploy Node.js Backend
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'server/**'  # Updated to match lowercase 'server' directory
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'latest'  
+        
+    - name: Install dependencies
+      working-directory: ./server
+      run: npm ci
+      
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+        
+    - name: Deploy to VPS
+      env:
+        DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        VPS_HOST: ${{ secrets.VPS_HOST }}
+        VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+      run: |
+        rsync -avz --delete ./server/ $VPS_USERNAME@$VPS_HOST:$DEPLOY_PATH
+        ssh $VPS_USERNAME@$VPS_HOST 'cd $DEPLOY_PATH && npm install && pm2 restart server'
