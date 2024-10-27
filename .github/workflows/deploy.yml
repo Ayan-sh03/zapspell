@@ -28,6 +28,9 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
         
+    - name: Test SSH connection
+      run: ssh -v ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "echo 'SSH connection successful'"
+        
     - name: Deploy to VPS
       env:
         DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
