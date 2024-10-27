@@ -25,7 +25,7 @@ app.use("/api/v1/attempt", authorizationMiddleware, attemptRouter);
 app.use("/api/v1/result", authorizationMiddleware, resultRouter);
 app.use("/api/v1/leaderboard",getLeaderboard)
 app.get("/", (_, res) => {
-  res.json({ message: "hello world" });
+  res.json({ message: "hello world with CI/CD" });
 });
 
 const PORT = process.env.PORT || 3000;
