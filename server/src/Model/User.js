@@ -19,6 +19,7 @@ const UserSchema = {
   email: {
     type: String,
     required: [true, "Please enter email address"],
+    unique: true,
   },
 };
 
