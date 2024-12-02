@@ -14,6 +14,7 @@ import { source_code } from "../font";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
+export const runtime = "edge";
 export default function RegisterPage() {
   return (
     <div className="container">

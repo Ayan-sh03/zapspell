@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-
+export const runtime = "edge";
 export const POST = async (request: Request) => {
   const res = await fetch(`${process.env.SERVER_URL}/api/v1/user/logout`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${cookies().get("token")?.value}`
+      Authorization: `Bearer ${cookies().get("token")?.value}`,
     },
   });
 
@@ -14,7 +14,10 @@ export const POST = async (request: Request) => {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const response = NextResponse.json({ message: "Logged out" }, { status: 200 });
+  const response = NextResponse.json(
+    { message: "Logged out" },
+    { status: 200 }
+  );
   response.cookies.set("token", "", {
     httpOnly: true,
     secure: true,

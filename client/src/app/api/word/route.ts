@@ -1,18 +1,21 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-
-export async function GET(req : NextRequest) {
+export const runtime = "edge";
+export async function GET(req: NextRequest) {
   //get the query params
   const { searchParams } = new URL(req.url);
-  const diff= searchParams.get("difficulty") || "easy";
+  const diff = searchParams.get("difficulty") || "easy";
 
-  const res = await fetch(`${process.env.SERVER_URL}/api/v1/word/random?difficulty=${diff}`, {
-    cache: "no-store",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${cookies().get("token")?.value}`,
-    },
-  });
+  const res = await fetch(
+    `${process.env.SERVER_URL}/api/v1/word/random?difficulty=${diff}`,
+    {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cookies().get("token")?.value}`,
+      },
+    }
+  );
 
   // console.log(res);
   const data = await res.json();
